@@ -94,3 +94,5 @@ Outputs:
   DuckStacApi:
     Description: "API Gateway endpoint URL for Prod stage for DuckStac function"
     Value: !Sub "https://${ExplicitApiHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
+
+#template

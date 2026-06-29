@@ -10,15 +10,30 @@ from shapely.wkb import loads
 logger = getLogger(__name__)
 
 
-def decode_geometry(int_list):
-    """Convert the integer list to bytes."""
-    geom_bytes = bytes(int_list)
+def decode_geometry(geom_value):
+    """Convert geometry to GeoJSON."""
+    import json, ast
 
-    # Use Shapely to decode the WKB format
-    geometry_object = loads(geom_bytes)
+    if isinstance(geom_value, str):
+        try:
+            return json.loads(geom_value)
+        except json.JSONDecodeError:
+            return ast.literal_eval(geom_value)
 
-    # Convert to GeoJSON format
-    return mapping(geometry_object)
+    if isinstance(geom_value, dict):
+        return convert_type(geom_value)
+
+    if isinstance(geom_value, (bytes, bytearray)):
+        return mapping(loads(bytes(geom_value)))
+
+    if isinstance(geom_value, np.ndarray):
+        return mapping(loads(geom_value.tobytes()))
+
+    if isinstance(geom_value, list):
+        return mapping(loads(bytes([int(x) for x in geom_value])))
+
+    raise ValueError(f"Unsupported geometry type: {type(geom_value)}")
+
 
 
 def convert_type(value):
@@ -172,7 +187,10 @@ def create_stac_item(df, item_id, collection_id):
             "stac_version",
             "stac_extensions",
             "collection",
+            "collection_1",
+            "properties",
         }
+        #add
 
         # Define projection fields that need special handling
         projection_fields = {
@@ -219,13 +237,21 @@ def create_stac_item(df, item_id, collection_id):
                 continue
 
         # Build the base item
+
+        raw_ext = row.get("stac_extensions")
+
+        """
+            raw_ext is getting the raw extensions from the row
+            Instead of getting a null/none we will get an empty list
+            """
+
         item = {
             "type": "Feature",
             "stac_version": "1.0.0",
-            "stac_extensions": convert_type(row.get("stac_extensions", [])),
+            "stac_extensions": convert_type(raw_ext) if raw_ext is not None else [],
             "id": item_id,
             "collection": collection_id,
-            "properties": properties,
+            "properties":properties,
             "geometry": geojson_geometry,
             "assets": convert_type(row.get("assets", {})),
             "links": convert_type(row.get("links", [])),
@@ -246,7 +272,11 @@ def create_stac_item(df, item_id, collection_id):
                 "bbox",
                 "stac_version",
                 "stac_extensions",
+                "collection",
+                "collection_1",
             ]:
+
+            #added collection, collection_1 to the list of columns to skip because they are already handled in the item creation and should not be duplicated in properties
                 try:
                     value = row.get(column)
                     # Handle arrays and scalars safely to avoid ambiguous truth value warnings
