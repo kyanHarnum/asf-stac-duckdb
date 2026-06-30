@@ -1,0 +1,17 @@
+name: push test
+
+on:
+  push:
+    paths:
+      - '*.txt'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run tests
+        run: echo "Running tests for changed .txt files"
+  
