@@ -44,3 +44,9 @@ shell: sam-image ## Run SAM inside container
 		-e AWS_SESSION_TOKEN \
 		sam-runner /bin/bash
 
+#what the makefile does:
+#build: builds the sam app
+#local: runs the sam app locally
+#deploy: builds and deploys the sam app to AWS
+#aws: runs the sam app in a docker container with aws credentials
+#starts
