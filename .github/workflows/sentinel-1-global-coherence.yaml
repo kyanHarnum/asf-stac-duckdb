@@ -3,7 +3,7 @@ name: push test
 on:
   push:
     paths:
-      - 'asf-stac-duckdb/duck-stac/lambda_root/data/stac_colelctions/sentinel-1-global-coherence/coherence-s3-objects.txt'
+      - '/duck-stac/lambda_root/data/stac_colelctions/sentinel-1-global-coherence/coherence-s3-objects.txt'
 
 jobs:
   test:
