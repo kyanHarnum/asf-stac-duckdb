@@ -5,10 +5,10 @@
 #   sam build
 #
 # Local Run
-#   sam local start-api --region us-east-2 --profile <profile>
+#   sam local start-api --region us-west-2 --profile <profile>
 #
 # Deploy
-#   sam deploy --stack-name=duck-stac --no-confirm-changeset --region us-east-2 --profile <profile>
+#   sam deploy --stack-name=duck-stac --no-confirm-changeset --region us-west-2 --profile <profile>
 
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
