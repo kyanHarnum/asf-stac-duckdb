@@ -38,7 +38,7 @@ Parameters:
   StacBucketName:
     Description: 'Optional Bucket to grant lambda access to'
     Type: String
-    Default: 'stacbuckets'
+    Default: 'asf-stac-duckdb'
 
 Conditions:
   IsS3: !Not [!Equals [!Ref StacBucketName, ""]]
