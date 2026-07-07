@@ -1,6 +1,0 @@
-name: Add lists
-
-on: push:
-      branches:
-        - main
-
