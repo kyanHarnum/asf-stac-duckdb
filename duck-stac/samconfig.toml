@@ -15,13 +15,14 @@ lint = true
 [default.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
-resolve_s3 = true
+# resolve_s3 = true
 s3_prefix = "duck-stac"
+
 region = "us-west-2"
 image_repositories = []
 
 [default.package.parameters]
-resolve_s3 = true
+# resolve_s3 = true
 
 [default.sync.parameters]
 watch = true
