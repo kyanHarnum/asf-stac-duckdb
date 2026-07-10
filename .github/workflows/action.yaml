@@ -1,5 +1,4 @@
 name: workflow ingestion
-
 on:
   workflow_dispatch:
     inputs:
@@ -7,8 +6,22 @@ on:
         description: 'Collection name'
         required: true
         type: string
-
-
 permissions:
   id-token: write
   contents: write
+env:
+  DATA_BUCKET: asf-stac-duckdb
+  DATA_REGION: us-west-2
+  DATA_PIPELINE_ROLE: arn:aws:iam::577391712883:role/aws-sam-cli-managed-asf-stac--PipelineExecutionRole-ESPP2g3IJ3tl
+jobs:
+  ingest-and-convert:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: collections/${{ github.event.inputs.collection }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: test list objects
+        run: |
+          chmod +x ./list-objects
+          ./list-objects
