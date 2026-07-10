@@ -1,0 +1,14 @@
+name: workflow ingestion
+
+on:
+  workflow_dispatch:
+    inputs:
+      collection:
+        description: 'Collection name'
+        required: true
+        type: string
+
+
+permissions:
+  id-token: write
+  contents: write
