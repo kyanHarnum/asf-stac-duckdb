@@ -30,7 +30,6 @@ jobs:
       - name: create the items into an ndjson
         run: |
           chmod +x create_items.py objects.txt
-          ./create_items.py objects.txt > items.ndjson
 
           ls -la 
           cat items.ndjson | head -n 5
