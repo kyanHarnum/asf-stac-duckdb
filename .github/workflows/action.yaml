@@ -25,6 +25,7 @@ jobs:
         run: |
           chmod +x ./list-objects
           ./list-objects
+          echo wc -l objects.txt
       - name: show created file
         run: |
           ls -la
