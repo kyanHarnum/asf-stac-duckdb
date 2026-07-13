@@ -31,9 +31,9 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          conda install -c conda-forge gdal
           pip install -r ../../duck-stac/requirements.txt
           pip install -e ../../asf-stac-util
-          conda install -c conda-forge gdal
   
 
       - uses: actions/checkout@v3
