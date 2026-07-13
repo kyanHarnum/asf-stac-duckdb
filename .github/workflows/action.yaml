@@ -9,10 +9,12 @@ on:
 permissions:
   id-token: write
   contents: write
+
 env:
   DATA_BUCKET: asf-stac-duckdb
   DATA_REGION: us-west-2
   DATA_PIPELINE_ROLE: arn:aws:iam::577391712883:role/aws-sam-cli-managed-asf-stac--PipelineExecutionRole-ESPP2g3IJ3tl
+
 jobs:
   ingest-and-convert:
     runs-on: ubuntu-latest
@@ -20,14 +22,23 @@ jobs:
       run:
         working-directory: collections/${{ github.event.inputs.collection }}
     steps:
+      - name: Install Dependencies
+        run: |
+          pip install -r ../../duck-stac/requirements.txt
+          pip install -e ../../asf-stac-util
+          conda install -c conda-forge gdal
+  
+
       - uses: actions/checkout@v3
       - name: test list objects
         run: |
           chmod +x ./list-objects
           ./list-objects
           wc -l objects.txt
-      
-      - name: create the items into an ndjson
+
+      - name: test create items
         run: |
-          chmod +x create_items.py objects.txt
-          wc -l items.ndjson
+          python create_items.py objects.txt > items.ndjson
+          ls -la
+          head -n 5 items.ndjson
+      
