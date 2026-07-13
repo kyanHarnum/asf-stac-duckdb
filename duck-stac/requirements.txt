@@ -10,3 +10,5 @@ shapely
 fastapi
 mangum
 boto3
+gdal
+geometry
