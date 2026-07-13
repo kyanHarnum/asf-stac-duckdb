@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Install Dependencies
         run: |
-          pip install -r ../../duck-stac/requirements.txt
+          pip install -r ../duck-stac/requirements.txt
           pip install -e ../../asf-stac-util
           conda install -c conda-forge gdal
   
