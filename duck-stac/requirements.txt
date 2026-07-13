@@ -11,4 +11,3 @@ fastapi
 mangum
 boto3
 geometry
-gdal
