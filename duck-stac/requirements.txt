@@ -9,3 +9,4 @@ pandas
 shapely
 fastapi
 mangum
+boto3
