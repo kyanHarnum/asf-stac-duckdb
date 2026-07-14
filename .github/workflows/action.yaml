@@ -22,13 +22,14 @@ jobs:
       image: ghcr.io/osgeo/gdal:ubuntu-full-latest
     steps:
 
-      - name: Set up git/make
-        run: |
-          apt-get update && apt-get install -y git make python3-pip
+      - uses: actions/checkout@v3
+      - name: Set up conda env
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: asf-stac
+          python-version: 3.9
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Run ingest script
+      - name: Run ingest pipeline
         run: |
           make ingest COLLECTION=${{ github.event.inputs.collection }}

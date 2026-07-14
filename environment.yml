@@ -8,4 +8,4 @@ dependencies:
   - gdal=3.6.0
   - postgresql
   - pip:
-      - -r requirements.txt
+      - -r duck-stac/requirements.txt
