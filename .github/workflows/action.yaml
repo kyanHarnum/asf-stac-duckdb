@@ -24,7 +24,7 @@ jobs:
       - name: install git/make/python
         run: |
           apt-get update
-          apt-get install -y git make python3.9 python 3.9-venv python3-pip
+          apt-get install -y git make python3.9 python3.9-venv python3-pip
       
       - uses: actions/checkout@v3
 
