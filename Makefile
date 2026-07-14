@@ -6,6 +6,19 @@ AWS_DEFAULT_REGION ?= us-west-2
 AWS_DEFAULT_PROFILE ?= default
 STACK_NAME ?= duck-stac
 
+## COLLECTION ?= glo-30-hand // testing purposes
+
+.PHONY: ingest
+ingest: 
+	cd collections/$(COLLECTION) && \
+	pip install -e ../../asf-stac-util && \
+	pip install -r ../../duck-stac/requirements.txt && \
+	chmod +x ./list-objects && \
+	./list-objects && \
+	wc -l objects.txt && \
+	python create_items.py objects.txt > items.ndjson && \
+	head -n 5 items.ndjson
+
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS=":.*##"} {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'
 

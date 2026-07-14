@@ -1,0 +1,11 @@
+name: asf-stac
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.9
+  - pip
+  - gdal=3.6.0
+  - postgresql
+  - pip:
+      - -r requirements.txt
