@@ -9,25 +9,27 @@ on:
 permissions:
   id-token: write
   contents: write
-
 env:
   DATA_BUCKET: asf-stac-duckdb
   DATA_REGION: us-west-2
   DATA_PIPELINE_ROLE: arn:aws:iam::577391712883:role/aws-sam-cli-managed-asf-stac--PipelineExecutionRole-ESPP2g3IJ3tl
-
 jobs:
   ingest-and-convert:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/osgeo/gdal:ubuntu-full-latest
+    defaults:
+      run:
+        shell: bash -l {0}
     steps:
-      - name: install git/make/python
-        run: |
-          apt-get update && apt-get install -y git make python3.9 python3-pip
-
-
       - uses: actions/checkout@v3
+        with:
+          submodules: true
 
-      - name: run ingestion and conversion
-        run: |
-          make ingest COLLECTION=${{ github.event.inputs.collection }}
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: asf-stac
+          python-version: '3.9'
+
+      - name: Run ingest pipeline
+        run: make ingest COLLECTION=${{ github.event.inputs.collection }}
