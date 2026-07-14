@@ -11,11 +11,12 @@ STACK_NAME ?= duck-stac
 .PHONY: ingest
 ingest: 
 	cd collections/$(COLLECTION) && \
-	pip install -e ../../asf-stac-util && \
+	pip install -r duckstac/requirements.txt && \
+	python3.9 -m pip install --break-system-packages -e ../../asf-stac-util && \
 	chmod +x ./list-objects && \
 	./list-objects && \
 	wc -l objects.txt && \
-	python create_items.py objects.txt > items.ndjson && \
+	python3.9 create_items.py objects.txt > items.ndjson && \
 	head -n 5 items.ndjson
 
 help: ## Show this help
