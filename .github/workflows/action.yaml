@@ -31,5 +31,11 @@ jobs:
           activate-environment: asf-stac
           python-version: '3.11'
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.DATA_PIPELINE_ROLE }}
+          aws-region: ${{ env.DATA_REGION }}
+
       - name: Run ingest pipeline
         run: make ingest COLLECTION=${{ github.event.inputs.collection }}
