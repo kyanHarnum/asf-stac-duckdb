@@ -11,6 +11,8 @@ STACK_NAME ?= duck-stac
 .PHONY: ingest
 ingest: 
 	cd collections/$(COLLECTION) && \
+	python3 -m venv venv && \
+	. venv/bin/activate && \
 	pip install -e ../../asf-stac-util && \
 	pip install -r ../../duck-stac/requirements.txt && \
 	chmod +x ./list-objects && \
