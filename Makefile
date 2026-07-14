@@ -11,8 +11,8 @@ STACK_NAME ?= duck-stac
 .PHONY: ingest
 ingest: 
 	cd collections/$(COLLECTION) && \
-	pip install --break-system-packages -r ../../duck-stac/requirements.txt && \
-	pip install --break-system-packages -e ../../asf-stac-util && \
+	python3.9 -m pip install --break-system-packages -r ../../duck-stac/requirements.txt && \
+	python3.9 -m pip install --break-system-packages -e ../../asf-stac-util && \
 	chmod +x ./list-objects && \
 	./list-objects && \
 	wc -l objects.txt && \
