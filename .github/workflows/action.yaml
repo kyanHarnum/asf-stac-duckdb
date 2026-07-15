@@ -30,8 +30,6 @@ jobs:
           environment-file: environment.yml
           activate-environment: asf-stac
           python-version: '3.11'
-        run: |
-          conda install -c conda-forge gdal libgdal-arrow-parquet
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -40,4 +38,6 @@ jobs:
           aws-region: ${{ env.DATA_REGION }}
 
       - name: Run ingest pipeline
-        run: make ingest COLLECTION=${{ github.event.inputs.collection }}
+        run: | 
+          make ingest COLLECTION=${{ github.event.inputs.collection }}
+          conda install -c conda-forge gdal libgdal-arrow-parquet
