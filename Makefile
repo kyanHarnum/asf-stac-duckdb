@@ -11,12 +11,13 @@ STACK_NAME ?= duck-stac
 .PHONY: ingest
 ingest:
 	cd collections/$(COLLECTION) && \
+	pip install -r ../../duck-stac/requirements.txt && \
 	pip install -e ../../asf-stac-util && \
 	chmod +x ./list-objects && \
 	./list-objects && \
 	wc -l objects.txt && \
 	python create_items.py objects.txt > items.ndjson && \
-	ogr2ogr -f Parquet $(COLLECTION).parquet -if GeoJSONSeq items.ndjson 
+	ogr2ogr -f Parquet $(COLLECTION).parquet items.ndjson 
 	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/
 
 help: ## Show this help
