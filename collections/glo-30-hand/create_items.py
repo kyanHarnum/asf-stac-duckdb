@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePath
 
 import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
 from osgeo import gdal
 from shapely import geometry
 
@@ -12,14 +14,14 @@ import asf_stac_util
 
 gdal.SetConfigOption('GDAL_DISABLE_READDIR_ON_OPEN', 'EMPTY_DIR')
 
-s3 = boto3.client('s3')
+s3_unsigned = boto3.client('s3', config=Config(signature_version=UNSIGNED))
 
 COLLECTION_ID = 'glo-30-hand'
 
 
 def get_s3_url() -> str:
     bucket = 'glo-30-hand'
-    location = s3.get_bucket_location(Bucket=bucket)['LocationConstraint']
+    location = s3_unsigned.get_bucket_location(Bucket=bucket)['LocationConstraint']
     return f'https://{bucket}.s3.{location}.amazonaws.com/'
 
 
