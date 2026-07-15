@@ -6,8 +6,6 @@ AWS_DEFAULT_REGION ?= us-west-2
 AWS_DEFAULT_PROFILE ?= default
 STACK_NAME ?= duck-stac
 
-## COLLECTION ?= glo-30-hand // testing purposes
-
 .PHONY: ingest
 ingest:
 	cd collections/$(COLLECTION) && \
@@ -17,9 +15,9 @@ ingest:
 	./list-objects && \
 	wc -l objects.txt && \
 	python create_items.py objects.txt > items.ndjson && \
-	cp items.ndjson items.geojsonl && \
-	ogr2ogr -f Parquet $(COLLECTION).parquet items.geojsonl && \ 
+	python ../../scripts/convert_to_parquet.py items.ndjson $(COLLECTION).parquet && \
 	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/
+
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS=":.*##"} {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'
