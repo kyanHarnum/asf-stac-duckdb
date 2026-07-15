@@ -26,6 +26,13 @@ jobs:
           role-to-assume: ${{ env.DATA_PIPELINE_ROLE }}
           aws-region: ${{ env.DATA_REGION }}
 
+      - name: setup git/make
+        run: |
+          sudo apt update && sudo apt install -y git make
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Run ingest pipeline
         run: | 
           make ingest COLLECTION=${{ github.event.inputs.collection }}
