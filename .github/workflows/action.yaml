@@ -9,36 +9,33 @@ on:
 permissions:
   id-token: write
   contents: write
-
 env:
   DATA_BUCKET: asf-stac-duckdb
   DATA_REGION: us-west-2
   DATA_PIPELINE_ROLE: arn:aws:iam::577391712883:role/aws-sam-cli-managed-asf-stac--PipelineExecutionRole-ESPP2g3IJ3tl
-
 jobs:
   ingest-and-convert:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: collections/${{ github.event.inputs.collection }}
+        shell: bash -l {0}
     steps:
-      - name: Install Dependencies
-        run: |
-          pip install -r ../duck-stac/requirements.txt
-          pip install -e ../../asf-stac-util
-          conda install -c conda-forge gdal
-  
-
       - uses: actions/checkout@v3
-      - name: test list objects
-        run: |
-          chmod +x ./list-objects
-          ./list-objects
-          wc -l objects.txt
+        with:
+          submodules: true
 
-      - name: test create items
-        run: |
-          python create_items.py objects.txt > items.ndjson
-          ls -la
-          head -n 5 items.ndjson
-      
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: asf-stac
+          python-version: '3.11'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.DATA_PIPELINE_ROLE }}
+          aws-region: ${{ env.DATA_REGION }}
+
+      - name: Run ingest pipeline
+        run: make ingest COLLECTION=${{ github.event.inputs.collection }}
