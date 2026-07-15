@@ -16,7 +16,7 @@ ingest:
 	./list-objects && \
 	wc -l objects.txt && \
 	python create_items.py objects.txt > items.ndjson && \
-	ogr2ogr -f Parquet $(COLLECTION).parquet items.ndjson 
+	ogr2ogr -f Parquet $(COLLECTION).parquet -if GeoJSONSeq items.ndjson 
 	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/
 
 help: ## Show this help

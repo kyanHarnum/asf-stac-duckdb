@@ -39,5 +39,4 @@ jobs:
 
       - name: Run ingest pipeline
         run: | 
-          conda install -c conda-forge gdal libgdal-arrow-parquet
           make ingest COLLECTION=${{ github.event.inputs.collection }}
