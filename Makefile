@@ -17,7 +17,7 @@ ingest:
 	wc -l objects.txt && \
 	python create_items.py objects.txt > items.ndjson && \
 	ogr2ogr -f Parquet $(COLLECTION).parquet items.ndjson 
-	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/$(COLLECTION).parquet --profile $(AWS_DEFAULT_PROFILE) --region $(AWS_DEFAULT_REGION)
+	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS=":.*##"} {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

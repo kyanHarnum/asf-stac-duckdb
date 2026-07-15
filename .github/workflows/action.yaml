@@ -30,6 +30,8 @@ jobs:
           environment-file: environment.yml
           activate-environment: asf-stac
           python-version: '3.11'
+        run: |
+          conda install -c conda-forge gdal libgdal-arrow-parquet
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
