@@ -6,12 +6,14 @@ from pathlib import Path, PurePath
 from typing import Optional
 
 import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
 from shapely import geometry
 
 import asf_stac_util
 
 
-s3 = boto3.client('s3')
+s3_unsigned = boto3.client('s3', config=Config(signature_version=UNSIGNED))
 
 # TODO verify the start and end datetime values for each season
 # TODO verify UTC
@@ -63,7 +65,7 @@ class ItemMetadata:
 
 def get_s3_url() -> str:
     bucket = 'sentinel-1-global-coherence-earthbigdata'
-    location = s3.get_bucket_location(Bucket=bucket)['LocationConstraint']
+    location = s3_unsigned.get_bucket_location(Bucket=bucket)['LocationConstraint']
     return f'https://{bucket}.s3.{location}.amazonaws.com/'
 
 
