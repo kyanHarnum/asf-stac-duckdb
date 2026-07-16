@@ -3,9 +3,9 @@ channels:
   - conda-forge
   - nodefaults
 dependencies:
-  - python=3.11
+  - python=3.11 #remove
   - pip
-  - gdal=3.6.0
+  - gdal=3.6.0 #remove 
   - postgresql
   - pip:
       - -r duck-stac/requirements.txt

@@ -6,12 +6,14 @@ from pathlib import Path, PurePath
 from typing import Optional
 
 import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
 from shapely import geometry
 
 import asf_stac_util
 
 
-s3 = boto3.client('s3')
+s3_unsigned = boto3.client('s3', config=Config(signature_version=UNSIGNED))
 
 # TODO verify the start and end datetime values for each season
 # TODO verify UTC
@@ -63,7 +65,7 @@ class ItemMetadata:
 
 def get_s3_url() -> str:
     bucket = 'sentinel-1-global-coherence-earthbigdata'
-    location = s3.get_bucket_location(Bucket=bucket)['LocationConstraint']
+    location = s3_unsigned.get_bucket_location(Bucket=bucket)['LocationConstraint']
     return f'https://{bucket}.s3.{location}.amazonaws.com/'
 
 
@@ -167,7 +169,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('s3_objects', type=Path, help='Path to a text file containing the list of S3 objects')
     parser.add_argument(
-        '-o', '--output-file', type=Path, help='Path for the output file', default='sentinel-1-global-coherence.ndjson'
+        '-o', '--output-file', type=Path, help='Path for the output file', default='items.ndjson'
     )
     parser.add_argument('-n', '--number-of-items', type=int, help='Number of items to create')
     return parser.parse_args()
