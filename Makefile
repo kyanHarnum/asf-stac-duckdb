@@ -15,7 +15,7 @@ ingest:
 	./list-objects && \
 	wc -l objects.txt && \
 	python create_items.py objects.txt > items.ndjson && \
-	python ../../convert_ndjson_to_parquet.py items.ndjson $(COLLECTION).parquet && \
+	ogr2ogr -f Parquet $(COLLECTION).parquet items.ndjson && \
 	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/
 
 

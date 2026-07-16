@@ -31,7 +31,7 @@ jobs:
           rm -f /etc/apt/sources.list.d/*arrow* /etc/apt/sources.list.d/*apache* 2>/dev/null || true
           ls /etc/apt/sources.list.d/
           apt-get update
-          apt-get install -y git make
+          apt-get install -y git make python3-pip
 
 
       - name: Checkout code
