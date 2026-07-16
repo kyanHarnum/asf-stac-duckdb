@@ -16,7 +16,7 @@ ingest:
 	wc -l objects.txt && \
 	python create_items.py objects.txt && \
 	ogr2ogr -f Parquet $(COLLECTION).parquet items.ndjson && \
-	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/$(COLLECTION).parquet --profile $(AWS_DEFAULT_PROFILE) --region $(AWS_DEFAULT_REGION)
+	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/$(COLLECTION).parquet
 
 
 help: ## Show this help

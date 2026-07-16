@@ -19,6 +19,16 @@ jobs:
     container:
       image: ghcr.io/osgeo/gdal:ubuntu-full-3.12.1
     steps:
+      - name: setup git/make/aws-cli
+        run: |
+          rm -f /etc/apt/sources.list.d/*arrow* /etc/apt/sources.list.d/*apache* 2>/dev/null || true
+          apt-get update
+          apt-get install -y git make python3-pip unzip curl
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
+
+      - uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -26,17 +36,5 @@ jobs:
           role-to-assume: ${{ env.DATA_PIPELINE_ROLE }}
           aws-region: ${{ env.DATA_REGION }}
 
-      - name: setup git/make
-        run: |
-          rm -f /etc/apt/sources.list.d/*arrow* /etc/apt/sources.list.d/*apache* 2>/dev/null || true
-          ls /etc/apt/sources.list.d/
-          apt-get update
-          apt-get install -y git make python3-pip
-
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Run ingest pipeline
-        run: | 
-          make ingest COLLECTION=${{ github.event.inputs.collection }}
+        run: make ingest COLLECTION=${{ github.event.inputs.collection }}
