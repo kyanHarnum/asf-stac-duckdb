@@ -9,14 +9,14 @@ STACK_NAME ?= duck-stac
 .PHONY: ingest
 ingest:
 	cd collections/$(COLLECTION) && \
-	pip install --break-system-packages -r ../../duck-stac/requirements.txt && \
+	pip install --break-system-packages boto3 shapely && \
 	pip install --break-system-packages -e ../../asf-stac-util && \
 	chmod +x ./list-objects && \
 	./list-objects && \
 	wc -l objects.txt && \
-	python create_items.py objects.txt > items.ndjson && \
+	python create_items.py objects.txt && \
 	ogr2ogr -f Parquet $(COLLECTION).parquet items.ndjson && \
-	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/
+	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/$(COLLECTION).parquet --profile $(AWS_DEFAULT_PROFILE) --region $(AWS_DEFAULT_REGION)
 
 
 help: ## Show this help
