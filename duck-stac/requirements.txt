@@ -4,7 +4,7 @@ sfeos-helpers==6.1.0
 # wheel # Maybe unnecessary
 uvicorn
 starlette
-numpy # https://github.com/aws/aws-sam-cli/issues/8101
+numpy==2.2.6 # https://github.com/aws/aws-sam-cli/issues/8101
 pandas
 shapely
 fastapi
