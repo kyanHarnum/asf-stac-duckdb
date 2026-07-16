@@ -16,20 +16,9 @@ env:
 jobs:
   ingest-and-convert:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -l {0}
+    container:
+      image: ghcr.io/osgeo/gdal:ubuntu-full-3.12.1
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-
-      - name: Set up conda environment
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          environment-file: environment.yml
-          activate-environment: asf-stac
-          python-version: '3.11'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -37,5 +26,17 @@ jobs:
           role-to-assume: ${{ env.DATA_PIPELINE_ROLE }}
           aws-region: ${{ env.DATA_REGION }}
 
+      - name: setup git/make
+        run: |
+          rm -f /etc/apt/sources.list.d/*arrow* /etc/apt/sources.list.d/*apache* 2>/dev/null || true
+          ls /etc/apt/sources.list.d/
+          apt-get update
+          apt-get install -y git make
+
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Run ingest pipeline
-        run: make ingest COLLECTION=${{ github.event.inputs.collection }}
+        run: | 
+          make ingest COLLECTION=${{ github.event.inputs.collection }}
