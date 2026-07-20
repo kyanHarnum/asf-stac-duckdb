@@ -20,7 +20,7 @@ env:
   # testing "sam package" and "sam deploy" commands.
   # TESTING_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   TESTING_REGION: us-west-2
-  PROD_STACK_NAME: duck-stac-prodcution
+  PROD_STACK_NAME: duck-stac-production
   PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::577391712883:role/aws-sam-cli-managed-asf-stac--PipelineExecutionRole-BeHJgJtuO5hr
   PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::577391712883:role/aws-sam-cli-managed-asf-s-CloudFormationExecutionRo-t2wyJWaBGVyC
   PROD_ARTIFACTS_BUCKET: asf-stac-duckdb-artifacts

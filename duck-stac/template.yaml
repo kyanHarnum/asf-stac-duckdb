@@ -92,7 +92,7 @@ Resources:
             Path: /{proxy+}
             Method: ANY
 
- 
+ #
   ExplicitApiHttpApi:
     Type: AWS::Serverless::HttpApi
 

@@ -8,9 +8,9 @@ STACK_NAME ?= duck-stac
 
 .PHONY: ingest
 ingest:
-	cd collections/$(COLLECTION) && \
-	pip install --break-system-packages boto3 shapely && \
-	pip install --break-system-packages -e ../../asf-stac-util && \
+	pip install --break-system-packages -r create_items_requirements.txt && \
+	pip install --break-system-packages -e asf-stac-util && \
+	cd duck-stac/lambda_root/data/stac_collections/$(COLLECTION) && \
 	chmod +x ./list-objects && \
 	./list-objects && \
 	wc -l objects.txt && \
@@ -57,9 +57,5 @@ shell: sam-image ## Run SAM inside container
 		-e AWS_SESSION_TOKEN \
 		sam-runner /bin/bash
 
-#what the makefile does:
-#build: builds the sam app
-#local: runs the sam app locally
-#deploy: builds and deploys the sam app to AWS
-#aws: runs the sam app in a docker container with aws credentials
-#starts
+Ingest: ## Ingest a collection into s3
+	make ingest COLLECTION=$(COLLECTION)
