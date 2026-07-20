@@ -57,7 +57,7 @@ jobs:
           aws-region: ${{ env.TESTING_REGION }}
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-packaging
-          role-duration-seconds: 3600
+          role-duration-seconds: 14400
           role-skip-session-tagging: true
 
       - name: Delete feature branch stack
@@ -136,7 +136,7 @@ jobs:
           aws-region: ${{ env.TESTING_REGION }}
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-packaging
-          role-duration-seconds: 3600
+          role-duration-seconds: 14400
           role-skip-session-tagging: true
 
       - name: Upload artifacts to testing artifact buckets
@@ -196,7 +196,7 @@ jobs:
           aws-region: ${{ env.TESTING_REGION }}
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-deployment
-          role-duration-seconds: 3600
+          role-duration-seconds: 14400
           role-skip-session-tagging: true
 
       - name: Deploy to testing account
@@ -258,4 +258,5 @@ jobs:
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --no-confirm-changeset \
+            --parameter-overrides HostedZoneId=Z0770127WGO4IC6NAK7Q
             --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}

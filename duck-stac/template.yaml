@@ -39,9 +39,19 @@ Parameters:
     Description: 'Optional Bucket to grant lambda access to'
     Type: String
     Default: 'asf-stac-duckdb'
+  
+  CustomDomainName:
+    Description: 'Custom Domain Name for API Gateway'
+    Type: String
+    default: 'stac.sp.asf.alaska.edu'
+  HostedZoneId: 
+    type: String
+    Default: ''
+    Description: 'Optional Hosted Zone ID for Route53'
 
 Conditions:
   IsS3: !Not [!Equals [!Ref StacBucketName, ""]]
+  UseCustomDomain: !Not [!Equals [!Ref HostedZoneId, ""]] #this
 
 Resources:
   DuckDependenciesLayer:
@@ -87,12 +97,45 @@ Resources:
             Path: /{proxy+}
             Method: ANY
 
+
+
+# More information: https://cruisemaniac.com/posts/sam-cli-custom-domains-route53/
+# Domain is passed in when its deployed, HostedZoneId is passed in when its deployed, and the certificate is created automatically by SAM.
+
+
+
+# If the custom domain is used the custom domain name is created, and we create the api cert.
+# after the certificate is created, its passed in
+# if no custom domain is used the api is created with no certificate, and the default api endpoint is used
   ExplicitApiHttpApi:
     Type: AWS::Serverless::HttpApi
+    Properties:
+      Domain: !If
+        - UseCustomDomain
+        - DomainName: !Ref CustomDomainName
+          CertificateArn: !Ref ApiCertificate
+        - Route53:
+            HostedZoneId: !Ref HostedZoneId
+        - !Ref "AWS::NoValue"
+
+# Needs custom domain name to be created, we pass it in to the certificate, and then the certificate is passed in to the api.
+# USe the stac.sp domain name, as well as the hosted zone id for the certificate to be created.
+  ApiCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Condition: UseCustomDomain
+    Properties:
+      DomainName: !Ref CustomDomainName
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref CustomDomainName
+          HostedZoneId: !Ref HostedZoneId
 
 Outputs:
   DuckStacApi:
     Description: "API Gateway endpoint URL for Prod stage for DuckStac function"
-    Value: !Sub "https://${ExplicitApiHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
-
+    Value: !Sub "https://${CustomDomainName}/"
+  CustomDomainUrl:
+    Description: Custom endpoint for API
+    Condition: UseCustomDomain
+    Value: !Sub "https://${CustomDomainName}/"
 #template
