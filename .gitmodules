@@ -1,3 +1,0 @@
-[submodule "stac-fastapi-duckdb"]
-	path = stac-fastapi-duckdb
-	url = https://github.com/Healy-Hyperspatial/stac-fastapi-duckdb
