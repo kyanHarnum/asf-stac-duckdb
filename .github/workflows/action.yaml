@@ -35,6 +35,7 @@ jobs:
         with:
           role-to-assume: ${{ env.DATA_PIPELINE_ROLE }}
           aws-region: ${{ env.DATA_REGION }}
+          role-duration-seconds: 14400
 
       - name: Run ingest pipeline
         run: make ingest COLLECTION=${{ github.event.inputs.collection }}
