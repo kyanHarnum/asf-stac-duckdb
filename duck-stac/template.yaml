@@ -41,7 +41,7 @@ Parameters:
     Default: 'stac.sp.asf.alaska.edu'
   HostedZoneId:
     Type: String
-    Default: 'Z0770127WGO4IC6NAK7Q'
+    Default: ''
     Description: 'Optional Hosted Zone ID for Route53 (leave blank to skip custom domain setup)'
 
 Conditions:
