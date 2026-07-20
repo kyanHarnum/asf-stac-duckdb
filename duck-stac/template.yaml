@@ -45,7 +45,7 @@ Parameters:
     Type: String
     Default: 'stac.sp.asf.alaska.edu'
   HostedZoneId: 
-    type: String
+    Type: String
     Default: ''
     Description: 'Optional Hosted Zone ID for Route53'
 
