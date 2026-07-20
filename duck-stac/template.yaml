@@ -24,34 +24,29 @@ Parameters:
     Description: 'Max lambda Memory in Mb'
     Type: Number
   StacParquetLocations:
-    Default: | #Changed from 'all_collections' to their specific stac collections for readability/accessability
-            {
-              "glo-30-hand": "s3://asf-stac-duckdb/glo-30-hand.parquet", 
-              "sentinel-1-global-coherence": "s3://asf-stac-duckdb/sentinel-1-global-coherence.parquet"
-            }
-#            {
-#              "glo-30-hand": "/var/task/data/parquet_files/all_collections.parquet",
-#              "sentinel-1-global-coherence": "/var/task/data/parquet_files/all_collections.parquet"
-#            }
+    Default: |
+      {
+        "glo-30-hand": "s3://asf-stac-duckdb/glo-30-hand.parquet",
+        "sentinel-1-global-coherence": "s3://asf-stac-duckdb/sentinel-1-global-coherence.parquet"
+      }
     Description: 'JSON Object pointing to collections Location of'
     Type: String
   StacBucketName:
     Description: 'Optional Bucket to grant lambda access to'
     Type: String
     Default: 'asf-stac-duckdb'
-  
   CustomDomainName:
     Description: 'Custom Domain Name for API Gateway'
     Type: String
     Default: 'stac.sp.asf.alaska.edu'
-  HostedZoneId: 
+  HostedZoneId:
     Type: String
     Default: ''
-    Description: 'Optional Hosted Zone ID for Route53'
+    Description: 'Optional Hosted Zone ID for Route53 (leave blank to skip custom domain setup)'
 
 Conditions:
   IsS3: !Not [!Equals [!Ref StacBucketName, ""]]
-  UseCustomDomain: !Not [!Equals [!Ref HostedZoneId, ""]] #this
+  UseCustomDomain: !Not [!Equals [!Ref HostedZoneId, ""]]
 
 Resources:
   DuckDependenciesLayer:
@@ -91,35 +86,16 @@ Resources:
             BucketName: !Ref StacBucketName
       Events:
         DuckStac:
-          Type: HttpApi # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: HttpApi
           Properties:
             ApiId: !Ref ExplicitApiHttpApi
             Path: /{proxy+}
             Method: ANY
 
-
-
-# More information: https://cruisemaniac.com/posts/sam-cli-custom-domains-route53/
-# Domain is passed in when its deployed, HostedZoneId is passed in when its deployed, and the certificate is created automatically by SAM.
-
-
-
-# If the custom domain is used the custom domain name is created, and we create the api cert.
-# after the certificate is created, its passed in
-# if no custom domain is used the api is created with no certificate, and the default api endpoint is used
+ 
   ExplicitApiHttpApi:
     Type: AWS::Serverless::HttpApi
-    Properties:
-      Domain: !If
-        - UseCustomDomain
-        - DomainName: !Ref CustomDomainName
-          CertificateArn: !Ref ApiCertificate
-          Route53:
-            HostedZoneId: !Ref HostedZoneId
-        - !Ref "AWS::NoValue"
 
-# Needs custom domain name to be created, we pass it in to the certificate, and then the certificate is passed in to the api.
-# USe the stac.sp domain name, as well as the hosted zone id for the certificate to be created.
   ApiCertificate:
     Type: AWS::CertificateManager::Certificate
     Condition: UseCustomDomain
@@ -130,12 +106,39 @@ Resources:
         - DomainName: !Ref CustomDomainName
           HostedZoneId: !Ref HostedZoneId
 
+  ApiCustomDomain:
+    Type: AWS::ApiGatewayV2::DomainName
+    Condition: UseCustomDomain
+    Properties:
+      DomainName: !Ref CustomDomainName
+      DomainNameConfigurations:
+        - CertificateArn: !Ref ApiCertificate
+          EndpointType: REGIONAL
+
+  ApiDomainMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Condition: UseCustomDomain
+    Properties:
+      DomainName: !Ref ApiCustomDomain
+      ApiId: !Ref ExplicitApiHttpApi
+      Stage: '$default'
+
+  ApiDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Condition: UseCustomDomain
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref CustomDomainName
+      Type: CNAME
+      TTL: '300'
+      ResourceRecords:
+        - !GetAtt ApiCustomDomain.RegionalDomainName
+
 Outputs:
   DuckStacApi:
     Description: "API Gateway endpoint URL for Prod stage for DuckStac function"
-    Value: !Sub "https://${CustomDomainName}/"
+    Value: !Sub "https://${ExplicitApiHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
   CustomDomainUrl:
-    Description: Custom endpoint for API
+    Description: "Custom domain endpoint (only created when HostedZoneId parameter was provided)"
     Condition: UseCustomDomain
     Value: !Sub "https://${CustomDomainName}/"
-#template
