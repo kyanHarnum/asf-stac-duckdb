@@ -114,7 +114,7 @@ Resources:
         - UseCustomDomain
         - DomainName: !Ref CustomDomainName
           CertificateArn: !Ref ApiCertificate
-        - Route53:
+          Route53:
             HostedZoneId: !Ref HostedZoneId
         - !Ref "AWS::NoValue"
 
