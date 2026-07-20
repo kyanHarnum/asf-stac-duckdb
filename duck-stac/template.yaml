@@ -43,7 +43,7 @@ Parameters:
   CustomDomainName:
     Description: 'Custom Domain Name for API Gateway'
     Type: String
-    default: 'stac.sp.asf.alaska.edu'
+    Default: 'stac.sp.asf.alaska.edu'
   HostedZoneId: 
     type: String
     Default: ''
