@@ -8,7 +8,7 @@ STACK_NAME ?= duck-stac
 
 .PHONY: ingest
 ingest:
-	pip install --break-system-packages boto3 shapely && \
+	pip install --break-system-packages create_items_requirements.txt && \
 	pip install --break-system-packages -e asf-stac-util && \
 	cd duck-stac/lambda_root/data/stac_collections/$(COLLECTION) && \
 	chmod +x ./list-objects && \
