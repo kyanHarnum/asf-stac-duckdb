@@ -63,7 +63,7 @@ def create_stac_item(s3_key: str, s3_url: str, gdal_info_output: dict) -> dict:
                 'type': 'image/tiff; application=geotiff',
             },
         },
-        'bbox': geometry.shape(item_geometry).bounds,
+        'bbox': [round(coord, 6) for coord in geometry.shape(item_geometry).bounds],
         'stac_extensions': [],
         'collection': COLLECTION_ID,
         'links': [
