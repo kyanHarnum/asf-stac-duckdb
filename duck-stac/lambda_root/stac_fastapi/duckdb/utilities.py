@@ -263,7 +263,7 @@ def create_stac_item(df, item_id, collection_id):
 
         # Dynamically populate properties with improved error handling
 
-        properties_test = {}
+        
         for column in df.columns:
             if column not in [
                 "bbox",
@@ -285,22 +285,23 @@ def create_stac_item(df, item_id, collection_id):
                             item["propeties"]["collection"] = convert_type(value)
                         
                         elif value.size > 0 and column == "bbox":
-                            item["properties"]["geometry_bbox"] = convert_type(value)
-
-                        # elif value.size > 0 and column == "collection":
-                        #     item["properties"]["collection"] = convert_type(value)
-
+                            keys = ["xmin","ymin","xmax","ymax"]
+                            converted_bbox = convert_type(value)
+                            bbox_dict = dict(zip(keys, converted_bbox))
+                            item["properties"]["geometry_bbox"] = bbox_dict
 
                         elif value.size > 0:
                             item["properties"][column] = value
                     elif not pd.isna(value):
                         # Scalar value - use pd.notna
-                        item["properties"].update(convert_type(value))
                         if column == "properties":
                             item["properties"].update(convert_type(value))
                   
                         elif column == "bbox":
-                            item["properties"]["geometry_bbox"] = convert_type(value)
+                            keys = ["xmin","ymin","xmax","ymax"]
+                            converted_bbox = convert_type(value)
+                            bbox_dict = dict(zip(keys, converted_bbox))
+                            item["properties"]["geometry_bbox"] = bbox_dict
 
                         elif column == "collection":
                             item["properties"]["collection"] = convert_type(value)
@@ -312,37 +313,6 @@ def create_stac_item(df, item_id, collection_id):
             except Exception as e:
                 print(f"Warning: Could not process property '{column}': {str(e)}")
                 continue
-
-        # for column in df.columns:
-        #     if column not in [
-        #         "id",
-        #         "geometry",
-        #         "assets",
-        #         "links",
-        #         "type",
-        #         "stac_version",
-        #         "stac_extensions",
-        #         "collection_1",
-        #     ]:
-
-        #     #added collection, collection_1 to the list of columns to skip because they are already handled in the item creation and should not be duplicated in properties
-
-        #     #start time end time bbox collection
-        #         try:
-        #             value = row.get(column)
-        #             # Handle arrays and scalars safely to avoid ambiguous truth value warnings
-        #             if value is not None:
-        #                 # For arrays, check if they have any elements; for scalars, check if not NaN
-        #                 if hasattr(value, "__len__") and hasattr(value, "size"):
-        #                     # NumPy array or similar - check if it has elements
-        #                     if value.size > 0:
-        #                         item["properties"] = convert_type(value)
-        #                 elif not pd.isna(value):
-        #                     # Scalar value - use pd.notna
-        #                     item["properties"] = convert_type(value)
-        #         except Exception as e:
-        #             print(f"Warning: Could not process property '{column}': {str(e)}")
-        #             continue
 
         return item
 
@@ -367,3 +337,5 @@ def create_stac_item(df, item_id, collection_id):
         else:
             logger.error("No row data available for debugging")
         raise  # Re-raise the exception to be handled by the caller
+
+
