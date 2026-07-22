@@ -301,13 +301,8 @@ def create_stac_item(df, item_id, collection_id):
                         elif column == "bbox":
                             item["properties"]["geometry_bbox"] = convert_type(value)
 
-
-                        
-
                         elif column == "collection":
                             item["properties"]["collection"] = convert_type(value)
-
-                            
 
 
                         else:
@@ -317,36 +312,36 @@ def create_stac_item(df, item_id, collection_id):
                 print(f"Warning: Could not process property '{column}': {str(e)}")
                 continue
 
-        # for column in df.columns:
-        #     if column not in [
-        #         "id",
-        #         "geometry",
-        #         "assets",
-        #         "links",
-        #         "type",
-        #         "stac_version",
-        #         "stac_extensions",
-        #         "collection_1",
-        #     ]:
+        for column in df.columns:
+            if column not in [
+                "id",
+                "geometry",
+                "assets",
+                "links",
+                "type",
+                "stac_version",
+                "stac_extensions",
+                "collection_1",
+            ]:
 
-        #     #added collection, collection_1 to the list of columns to skip because they are already handled in the item creation and should not be duplicated in properties
+            #added collection, collection_1 to the list of columns to skip because they are already handled in the item creation and should not be duplicated in properties
 
-        #     #start time end time bbox collection
-        #         try:
-        #             value = row.get(column)
-        #             # Handle arrays and scalars safely to avoid ambiguous truth value warnings
-        #             if value is not None:
-        #                 # For arrays, check if they have any elements; for scalars, check if not NaN
-        #                 if hasattr(value, "__len__") and hasattr(value, "size"):
-        #                     # NumPy array or similar - check if it has elements
-        #                     if value.size > 0:
-        #                         item["properties"] = convert_type(value)
-        #                 elif not pd.isna(value):
-        #                     # Scalar value - use pd.notna
-        #                     item["properties"] = convert_type(value)
-        #         except Exception as e:
-        #             print(f"Warning: Could not process property '{column}': {str(e)}")
-        #             continue
+            #start time end time bbox collection
+                try:
+                    value = row.get(column)
+                    # Handle arrays and scalars safely to avoid ambiguous truth value warnings
+                    if value is not None:
+                        # For arrays, check if they have any elements; for scalars, check if not NaN
+                        if hasattr(value, "__len__") and hasattr(value, "size"):
+                            # NumPy array or similar - check if it has elements
+                            if value.size > 0:
+                                item["properties"] = convert_type(value)
+                        elif not pd.isna(value):
+                            # Scalar value - use pd.notna
+                            item["properties"] = convert_type(value)
+                except Exception as e:
+                    print(f"Warning: Could not process property '{column}': {str(e)}")
+                    continue
 
         return item
 
