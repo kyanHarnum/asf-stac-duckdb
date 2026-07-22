@@ -273,9 +273,6 @@ def create_stac_item(df, item_id, collection_id):
                 continue
 
 
-            if column == "bbox":
-                column = "geometry_bbox"
-                
             try:
                 value = row.get(column)
                 # Handle arrays and scalars safely to avoid ambiguous truth value warnings
@@ -285,15 +282,25 @@ def create_stac_item(df, item_id, collection_id):
                         # NumPy array or similar - check if it has elements
                         if value.size > 0 and column == "properties":
                             item["properties"].update(convert_type(value))
+                        
+                        elif value.size > 0 and column == "bbox":
+                            item["properties"]["geometry_bbox"] = convert_type(value)
+
+
                         elif value.size > 0:
-                            item["properties"][column] = convert_type(value)
+                            item["properties"][column] = value
                     elif not pd.isna(value):
                         # Scalar value - use pd.notna
                         item["properties"].update(convert_type(value))
                         if column == "properties":
                             item["properties"].update(convert_type(value))
+                  
+                        elif column == "bbox":
+                            item["properties"]["geometry_bbox"] = convert_type(value)
+
+
                         else:
-                            item["properties"][column] = convert_type(value)
+                            item["properties"][column] = value
                             
             except Exception as e:
                 print(f"Warning: Could not process property '{column}': {str(e)}")
