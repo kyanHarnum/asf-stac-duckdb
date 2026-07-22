@@ -1,4 +1,5 @@
 """Database logic."""
+
 import json
 import logging
 import os
@@ -43,12 +44,12 @@ class DatabaseLogic:
         """Initialize the database logic."""
         self.settings: DuckDBSettings = settings or DuckDBSettings()
         self.stac_file_path: str = os.getenv("STAC_FILE_PATH", "")
-        self.item_serializer: Type[
+        self.item_serializer: Type[serializers.ItemSerializer] = (
             serializers.ItemSerializer
-        ] = serializers.ItemSerializer
-        self.collection_serializer: Type[
+        )
+        self.collection_serializer: Type[serializers.CollectionSerializer] = (
             serializers.CollectionSerializer
-        ] = serializers.CollectionSerializer
+        )
         self.extensions: List[str] = []
 
     """CORE LOGIC"""
@@ -993,9 +994,9 @@ class DatabaseLogic:
                     for col in row.index if hasattr(row, "index") else row.keys():
                         try:
                             value = row[col]
-                            sample_data[
-                                col
-                            ] = f"{type(value).__name__}: {str(value)[:50]}..."
+                            sample_data[col] = (
+                                f"{type(value).__name__}: {str(value)[:50]}..."
+                            )
                         except Exception:
                             sample_data[col] = "Error accessing value"
                     logger.error(f"Row sample data: {sample_data}")
