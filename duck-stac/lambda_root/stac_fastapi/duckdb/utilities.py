@@ -289,7 +289,7 @@ def create_stac_item(df, item_id, collection_id):
                                 item["properties"] = convert_type(value)
                         elif not pd.isna(value):
                             # Scalar value - use pd.notna
-                            item["properties"][column] = convert_type(value)
+                            item["properties"] = convert_type(value)
                 except Exception as e:
                     print(f"Warning: Could not process property '{column}': {str(e)}")
                     continue
