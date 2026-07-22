@@ -1,3 +1,5 @@
 # When the stac collections grow, throw in the needed dependencies for the new collections
 boto3
 shapely
+duckdb
+sys

@@ -15,8 +15,7 @@ ingest:
 	./list-objects && \
 	wc -l objects.txt && \
 	python create_items.py objects.txt && \
-	cd ../ && \
-	python duckdb_parquet.py && \
+	python ../duckdb_parquet.py items.ndjson $(COLLECTION).parquet && \
 	aws s3 cp $(COLLECTION).parquet s3://asf-stac-duckdb/$(COLLECTION).parquet
 
 
