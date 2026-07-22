@@ -32,6 +32,7 @@ def decode_geometry(geom_value):
     if isinstance(geom_value, list):
         return mapping(loads(bytes([int(x) for x in geom_value])))
 
+
     raise ValueError(f"Unsupported geometry type: {type(geom_value)}")
 
 
@@ -285,7 +286,7 @@ def create_stac_item(df, item_id, collection_id):
                         if hasattr(value, "__len__") and hasattr(value, "size"):
                             # NumPy array or similar - check if it has elements
                             if value.size > 0:
-                                item["properties"][column] = convert_type(value)
+                                item["properties"] = convert_type(value)
                         elif not pd.isna(value):
                             # Scalar value - use pd.notna
                             item["properties"][column] = convert_type(value)
