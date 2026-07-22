@@ -286,6 +286,9 @@ def create_stac_item(df, item_id, collection_id):
                         elif value.size > 0 and column == "bbox":
                             item["properties"]["geometry_bbox"] = convert_type(value)
 
+                        elif value.size > 0 and column == "collection":
+                            item["properties"]["collection"] = convert_type(value)
+
 
                         elif value.size > 0:
                             item["properties"][column] = value
@@ -303,8 +306,7 @@ def create_stac_item(df, item_id, collection_id):
 
                         elif column == "collection":
                             item["properties"]["collection"] = convert_type(value)
-        
-                            print(f"Debugging" value)
+
                             
 
 
