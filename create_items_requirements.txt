@@ -2,4 +2,3 @@
 boto3
 shapely
 duckdb
-sys
