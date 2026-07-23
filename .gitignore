@@ -249,4 +249,7 @@ $RECYCLE.BIN/
 #trust policy
 trust-policy-testing.json
 
+#ruff
+.ruff
+
 # End of https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode

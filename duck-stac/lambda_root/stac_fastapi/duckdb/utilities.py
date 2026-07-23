@@ -1,4 +1,5 @@
 """Database utility functions."""
+
 from datetime import date, datetime
 from logging import getLogger
 
@@ -33,7 +34,6 @@ def decode_geometry(geom_value):
         return mapping(loads(bytes([int(x) for x in geom_value])))
 
     raise ValueError(f"Unsupported geometry type: {type(geom_value)}")
-
 
 
 def convert_type(value):
@@ -190,7 +190,7 @@ def create_stac_item(df, item_id, collection_id):
             "collection_1",
             "properties",
         }
-        #add
+        # add
 
         # Define projection fields that need special handling
         projection_fields = {
@@ -251,7 +251,7 @@ def create_stac_item(df, item_id, collection_id):
             "stac_extensions": convert_type(raw_ext) if raw_ext is not None else [],
             "id": item_id,
             "collection": collection_id,
-            "properties":properties,
+            "properties": properties,
             "geometry": geojson_geometry,
             "assets": convert_type(row.get("assets", {})),
             "links": convert_type(row.get("links", [])),
@@ -262,36 +262,57 @@ def create_stac_item(df, item_id, collection_id):
             item["bbox"] = bbox
 
         # Dynamically populate properties with improved error handling
+
+        
         for column in df.columns:
             if column not in [
-                "id",
-                "geometry",
-                "assets",
-                "links",
-                "type",
                 "bbox",
-                "stac_version",
-                "stac_extensions",
                 "collection",
-                "collection_1",
+                "properties",
             ]:
+                continue
 
-            #added collection, collection_1 to the list of columns to skip because they are already handled in the item creation and should not be duplicated in properties
-                try:
-                    value = row.get(column)
-                    # Handle arrays and scalars safely to avoid ambiguous truth value warnings
-                    if value is not None:
-                        # For arrays, check if they have any elements; for scalars, check if not NaN
-                        if hasattr(value, "__len__") and hasattr(value, "size"):
-                            # NumPy array or similar - check if it has elements
-                            if value.size > 0:
-                                item["properties"][column] = convert_type(value)
-                        elif not pd.isna(value):
-                            # Scalar value - use pd.notna
-                            item["properties"][column] = convert_type(value)
-                except Exception as e:
-                    print(f"Warning: Could not process property '{column}': {str(e)}")
-                    continue
+
+            try:
+                value = row.get(column)
+                # Handle arrays and scalars safely to avoid ambiguous truth value warnings
+                if value is not None:
+                    # For arrays, check if they have any elements; for scalars, check if not NaN
+                    if hasattr(value, "__len__") and hasattr(value, "size"):
+                        # NumPy array or similar - check if it has elements
+                        if value.size > 0 and column == "properties":
+                            item["properties"].update(convert_type(value))
+                            item["propeties"]["collection"] = convert_type(value)
+                        
+                        elif value.size > 0 and column == "bbox":
+                            keys = ["xmin","ymin","xmax","ymax"]
+                            converted_bbox = convert_type(value)
+                            bbox_dict = dict(zip(keys, converted_bbox))
+                            item["properties"]["geometry_bbox"] = bbox_dict
+
+                        elif value.size > 0:
+                            item["properties"][column] = value
+                    elif not pd.isna(value):
+                        # Scalar value - use pd.notna
+                        if column == "properties":
+                            item["properties"].update(convert_type(value))
+                  
+                        elif column == "bbox":
+                            keys = ["xmin","ymin","xmax","ymax"]
+                            converted_bbox = convert_type(value)
+                            bbox_dict = dict(zip(keys, converted_bbox))
+                            item["properties"]["geometry_bbox"] = bbox_dict
+
+                        elif column == "collection":
+                            item["properties"]["collection"] = convert_type(value)
+
+
+                        else:
+                            item["properties"][column] = value
+                            
+            except Exception as e:
+                print(f"Warning: Could not process property '{column}': {str(e)}")
+                continue
 
         return item
 
@@ -316,3 +337,5 @@ def create_stac_item(df, item_id, collection_id):
         else:
             logger.error("No row data available for debugging")
         raise  # Re-raise the exception to be handled by the caller
+
+

@@ -1,4 +1,5 @@
 """DuckDB runtime configuration and data source mapping."""
+
 import json
 import logging
 import os
@@ -107,8 +108,10 @@ class DuckDBSettings(ApiSettings, ApiBaseSettings):
         """Create a per-request DuckDB connection with httpfs and spatial extensions configured."""
         conn = duckdb.connect(database=self.duckdb_database_path)
         try:
-            conn.execute("SET extension_directory='/tmp/duckdb_extensions'") #remove the IO Error
-        
+            conn.execute(
+                "SET extension_directory='/tmp/duckdb_extensions'"
+            )  # remove the IO Error
+
             # Enable remote I/O via httpfs where available
             try:
                 conn.execute("INSTALL httpfs;")
